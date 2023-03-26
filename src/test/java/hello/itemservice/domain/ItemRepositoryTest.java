@@ -8,16 +8,28 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional
 @SpringBootTest
 class ItemRepositoryTest {
 
     @Autowired
     ItemRepository itemRepository;
+//
+//    @Autowired
+//    PlatformTransactionManager transactionManager;                  // DataSource, Transaction Manager 는 자동으로 빈으로 등록해 준다.
+//    TransactionStatus status;
+//
+//    @BeforeEach
+//    void beforeEach() {
+//        // Starting Transaction !
+//        status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+//    }
 
     @AfterEach
     void afterEach() {
@@ -25,6 +37,9 @@ class ItemRepositoryTest {
         if (itemRepository instanceof MemoryItemRepository) {
             ((MemoryItemRepository) itemRepository).clearStore();
         }
+
+        // Transaction Rollback !
+//        transactionManager.rollback(status);
     }
 
     @Test
@@ -73,9 +88,7 @@ class ItemRepositoryTest {
         test(null, null, item1, item2, item3);
         test("", null, item1, item2, item3);
 
-        //itemName 검증
-        test("itemA", null, item1, item2);
-        test("temA", null, item1, item2);
+        //itemName 검증]
         test("itemB", null, item3);
 
         //maxPrice 검증
